@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: app
+    container_name: app
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "$PORT:$PORT"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$DB_PASS
+      - MYSQL_DATABASE=$DB_NAME
+      - MYSQL_USER=$DB_USER
+      - MYSQL_PASSWORD=$DB_PASS
+    ports:
+      - "$DB_PORT:$DB_PORT"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
